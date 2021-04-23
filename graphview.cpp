@@ -34,6 +34,7 @@ GraphView::~GraphView()
 
 void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QString xName, QString yName, bool isHeader, int color, int type)
 {
+
     _curGraphIndex = 0;
     if(isHeader)
     {
@@ -43,7 +44,7 @@ void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QStri
     QPointer<QCPGraph> mGraph1;
     mGraph1 = _pPlot->addGraph(_pPlot->xAxis, _pPlot->axisRect()->axis(QCPAxis::atRight, 0));
     QPen pen;
-    pen.setWidthF(2.0);
+    pen.setWidthF(0.5);
     switch(color)
     {
         case 0: pen.setColor(Qt::black);       break;
@@ -62,7 +63,7 @@ void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QStri
     }
 
     mGraph1->setPen(pen);
-    mGraph1->addData(*dataX, *dataY);
+    mGraph1->setData(*dataX, *dataY);
 
     _pPlot->xAxis->rescale();
     double max = dataY->at(0);
@@ -77,6 +78,7 @@ void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QStri
 
     _pPlot->xAxis->setLabel(xName);
     _pPlot->yAxis->setLabel(yName);
+    _pPlot->replot();
     show();
 }
 
