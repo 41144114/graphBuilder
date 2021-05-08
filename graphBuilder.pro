@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     qcustomplot.cpp \
-    graphview.cpp
+    graphview.cpp \
+    palettemngr.cpp
 
 HEADERS  += mainwindow.h \
     qcustomplot.h \
-    graphview.h
+    graphview.h \
+    palettemngr.h
 
 FORMS    += mainwindow.ui \
     graphview.ui
@@ -28,4 +30,7 @@ RESOURCES += \
     Resources/qresources.qrc
 
 DISTFILES += \
-    Resources/folder.png
+    Resources/folder.png\
+    Resources/resources.rc
+
+RC_FILE = Resources/resources.rc

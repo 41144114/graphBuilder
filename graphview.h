@@ -19,8 +19,8 @@ class GraphView : public QMainWindow
 public:
     explicit GraphView(QWidget *parent = 0);
     ~GraphView();
-    void buildGraph(QVector<double> *dataX, QVector<double> *dataY, QString xName, QString yName, bool isHeader, int color, int type);
-    void addGraph(QVector<double> *dataX, QVector<double> *dataY, bool isHeader, int color, int type);
+    void buildGraph(QVector<double> *dataX, QVector<double> *dataY, QString xName, QString yName, int color, int type, double width, QString header, QString pictureLabel);
+    void addGraph(QVector<double> *dataX, QVector<double> *dataY, int color, int type, double width);
 
 signals:
     void closed();
@@ -34,6 +34,7 @@ private:
     QAction* _pDoScreenAction;
     int _curGraphIndex;
     void doScreen();
+    QPen setupPen(double width, int type, int color);
 };
 
 #endif // GRAPHVIEW_H
