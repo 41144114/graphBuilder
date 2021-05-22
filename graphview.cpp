@@ -21,7 +21,6 @@ GraphView::GraphView(QWidget *parent) :
     connect(_pDoScreenAction, &QAction::triggered, this, &GraphView::doScreen);
     this->addAction(_pDoScreenAction);
 
-    //_pPlot->xAxis->setBasePen(QPen(QColor(Qt::red))); //<-установка линии самой оси
     _pPlot->xAxis->setTickLabelFont(QFont("Times", 12));
     _pPlot->yAxis->setTickLabelFont(QFont("Times", 12));
     _pPlot->xAxis->setLabelFont(QFont("Times", 12));
@@ -30,6 +29,11 @@ GraphView::GraphView(QWidget *parent) :
     ui->label_2->setFont(QFont("Times", 12));
     ui->label->setStyleSheet("background-color: white");
     ui->label_2->setStyleSheet("background-color: white");
+
+    setupGlobalMenu();
+
+    connect(_pPlot, &QCustomPlot::mousePress, this, &GraphView::mousePress);
+    connect(_pPlot, &QCustomPlot::mouseRelease, this, &GraphView::mouseRelease);
 }
 
 GraphView::~GraphView()
@@ -41,6 +45,7 @@ void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QStri
                            int color, int type, double width, QString header, QString pictureLabel)
 {
     _curGraphIndex = 0;
+    _pPlot->clearGraphs();
 
     addGraph(dataX, dataY, color, type, width);
 
@@ -75,35 +80,7 @@ void GraphView::addGraph(QVector<double> *dataX, QVector<double> *dataY, int col
     _pPlot->graph(_curGraphIndex)->setPen(pen);
     _pPlot->graph(_curGraphIndex)->setData(*dataX, *dataY);
 
-    double max = dataY->at(0);
-    double min = dataY->at(0);
-    double minX = dataX->at(0);
-    double maxX = dataX->at(0);
-    for(int i = 1; i < dataY->count(); ++i)
-    {
-        if(dataY->at(i) > max) max = dataY->at(i);
-        if(dataY->at(i) < min) min = dataY->at(i);
-        if(dataX->at(i) > maxX) maxX = dataX->at(i);
-        if(dataX->at(i) < minX) minX = dataX->at(i);
-    }
-
-    if(_curGraphIndex == 0)
-    {
-        _pPlot->yAxis->setRange(max, min);
-        _pPlot->xAxis->setRange(maxX, minX);
-    }
-    else
-    {
-        if(_pPlot->yAxis->range().maxRange < max)
-            _pPlot->yAxis->setRange(max, _pPlot->yAxis->range().minRange);
-        if(_pPlot->yAxis->range().minRange > min)
-            _pPlot->yAxis->setRange(_pPlot->yAxis->range().maxRange, min);
-
-        if(_pPlot->xAxis->range().maxRange < maxX)
-            _pPlot->xAxis->setRange(maxX, _pPlot->xAxis->range().minRange);
-        if(_pPlot->xAxis->range().minRange > minX)
-            _pPlot->xAxis->setRange(_pPlot->xAxis->range().maxRange, minX);
-    }
+    resize(dataX, dataY);
 
     _curGraphIndex++;
     _pPlot->replot();
@@ -139,6 +116,41 @@ QPen GraphView::setupPen(double width, int type, int color)
     return pen;
 }
 
+void GraphView::resize(QVector<double> *dataX, QVector<double> *dataY)
+{
+    if(_curGraphIndex == 0)
+    {
+        _curMaxY = dataY->at(0);
+        _curMinY = dataY->at(0);
+        _curMinX = dataX->at(0);
+        _curMaxX = dataX->at(0);
+    }
+
+    double maxY = _curMaxY;
+    double minY = _curMinY;
+    double minX = _curMinX;
+    double maxX = _curMaxX;
+
+    for(int i = 0; i < dataY->count(); ++i)
+    {
+        if(dataY->at(i) > maxY) maxY = dataY->at(i);
+        if(dataY->at(i) < minY) minY = dataY->at(i);
+        if(dataX->at(i) > maxX) maxX = dataX->at(i);
+        if(dataX->at(i) < minX) minX = dataX->at(i);
+    }
+
+    if(maxY > _curMaxY)
+        _curMaxY = maxY;
+    if(minY < _curMinY)
+        _curMinY = minY;
+    if(maxX > _curMaxX)
+        _curMaxX = maxX;
+    if(minX < _curMinX)
+        _curMinX = minX;
+
+    _pPlot->yAxis->setRange(_curMaxY, _curMinY);
+    _pPlot->xAxis->setRange(_curMaxX, _curMinX);
+}
 
 void GraphView::doScreen()
 {
@@ -146,7 +158,58 @@ void GraphView::doScreen()
     QApplication::clipboard()->setPixmap(QPixmap(this->windowHandle()->screen()->grabWindow(QWidget::winId())));
 }
 
+void GraphView::setDefaultSize()
+{
+    _pPlot->yAxis->setRange(_curMaxY, _curMinY);
+    _pPlot->xAxis->setRange(_curMaxX, _curMinX);
+    _pPlot->replot();
+}
 
+//============ Resize =================================================================================================
+bool GraphView::checkNeedToResize(QPoint start, QPoint finish)
+{
+    if(abs(start.x() - finish.x()) > 15)
+        if(abs(start.y() - finish.y()) > 15)
+            return true;
+    return false;
+}
+
+void GraphView::resizeByPoints(QPoint start, QPoint finish)
+{
+    _pPlot->yAxis->setRange(_pPlot->yAxis->pixelToCoord(start.y()),_pPlot->yAxis->pixelToCoord(finish.y()));
+    _pPlot->xAxis->setRange(_pPlot->xAxis->pixelToCoord(start.x()),_pPlot->xAxis->pixelToCoord(finish.x()));
+    _pPlot->replot();
+}
+
+void GraphView::mousePress(QMouseEvent* event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        _startPoint = event->pos();
+        isActualZoom = true;
+    }
+    else
+        isActualZoom = false;
+
+
+    if(event->button() == Qt::RightButton)
+        setDefaultSize();
+}
+
+void GraphView::mouseRelease(QMouseEvent* event)
+{
+    if(event->button() == Qt::LeftButton && isActualZoom)
+    {
+        QPoint endPoint = event->pos();
+        if(checkNeedToResize(_startPoint, endPoint))
+            resizeByPoints(_startPoint, endPoint);
+    }
+}
+//=====================================================================================================================
+//=
+//=
+//=
+//=
 //================== Events ==========================================
 void GraphView::closeEvent(QCloseEvent *event)
 {
@@ -154,3 +217,27 @@ void GraphView::closeEvent(QCloseEvent *event)
     emit closed();
     event->accept();
 }
+
+
+//=========== Context menu ============================================================================================
+void GraphView::setupGlobalMenu()
+{
+    connect(this, &GraphView::customContextMenuRequested,       this, &GraphView::onShowGlobalMenu);
+
+    _pGlobalMenu = new QMenu(this);
+    _pShowFourier = new QAction("Преобразование Фурье", this);
+    connect(_pShowFourier,    &QAction::triggered,        this, &GraphView::onShowFourier);
+    _pGlobalMenu->addAction(_pShowFourier);
+
+}
+
+void GraphView::onShowGlobalMenu(QPoint point)
+{
+    _pGlobalMenu->popup(this->mapToGlobal(point));
+}
+
+void GraphView::onShowFourier()
+{
+
+}
+//=====================================================================================================================

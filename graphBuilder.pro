@@ -13,17 +13,20 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
+    aboutprogramwindow.cpp \
         mainwindow.cpp \
     qcustomplot.cpp \
     graphview.cpp \
     palettemngr.cpp
 
 HEADERS  += mainwindow.h \
+    aboutprogramwindow.h \
     qcustomplot.h \
     graphview.h \
     palettemngr.h
 
 FORMS    += mainwindow.ui \
+    aboutprogramwindow.ui \
     graphview.ui
 
 RESOURCES += \

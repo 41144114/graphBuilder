@@ -28,13 +28,36 @@ signals:
 protected:
     void closeEvent(QCloseEvent *event);
 
+private slots:
+    void mousePress(QMouseEvent* event);
+    void mouseRelease(QMouseEvent* event);
+    void onShowGlobalMenu(QPoint point);
+    void onShowFourier();
+
+
 private:
     Ui::GraphView *ui;
     QCustomPlot* _pPlot;
     QAction* _pDoScreenAction;
+    QMenu* _pGlobalMenu;
+    QAction* _pShowFourier;
+    double _curMaxX;
+    double _curMaxY;
+    double _curMinX;
+    double _curMinY;
     int _curGraphIndex;
+    QPoint _startPoint;
+    bool isActualZoom;
+
     void doScreen();
+    void setDefaultSize();
+    bool checkNeedToResize(QPoint start, QPoint finish);
+    void resizeByPoints(QPoint start, QPoint finish);
+    void resize(QVector<double> *dataX, QVector<double> *dataY);
     QPen setupPen(double width, int type, int color);
+    void setupGlobalMenu();
+
+
 };
 
 #endif // GRAPHVIEW_H

@@ -8,6 +8,9 @@
 #include <QDragEnterEvent>
 #include "graphview.h"
 
+class AboutProgramWindow;
+class PaletteMngr;
+
 namespace Ui {
 class MainWindow;
 }
@@ -17,7 +20,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
 private slots:
@@ -26,6 +29,10 @@ private slots:
     void onGraphViewClosed();
 
     void on_checkBox_clicked();
+    void onShowGlobalMenu(QPoint point);
+    void onAboutQt();
+    void onAboutProgram();
+    void onTheme();
 
 protected:
     void dropEvent(QDropEvent* event);
@@ -33,10 +40,17 @@ protected:
 
 private:
     Ui::MainWindow *ui;
+    AboutProgramWindow* _pAboutProgram;
+    PaletteMngr* _pPaletteMngr;
     QFile* _pFile;
-    QList<QVector<double>> _dataList;
+    QVector<QVector<double>> _dataList;
     QString _head;
+    QMenu* _pGlobalMenu;
+    QAction* _pAboutQtAction;
+    QAction* _pAboutProgrammAction;
+    QAction* _pThemeAction;
     bool _isHeadAdded;
+    bool _isDarkTheme;
 
     GraphView _graphView;
 
@@ -45,6 +59,10 @@ private:
     void clearData();
     void setComboBoxContent();
     void crutchWithHead();
+    void setupGlobalMenu();
+
+    void saveSettings();
+    void loadSettings();
 };
 
 #endif // MAINWINDOW_H

@@ -22,6 +22,9 @@
     <height>232</height>
    </size>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
   <property name="acceptDrops">
    <bool>true</bool>
   </property>
@@ -407,27 +410,8 @@
     </item>
    </layout>
    <zorder>line</zorder>
-   <zorder>comboBox</zorder>
-   <zorder>comboBox_2</zorder>
-   <zorder>label_2</zorder>
-   <zorder>label_3</zorder>
-   <zorder>checkBox</zorder>
-   <zorder>pushButton_2</zorder>
-   <zorder>comboLineType</zorder>
-   <zorder>label_4</zorder>
-   <zorder>lineEdit_3</zorder>
-   <zorder>comboColor</zorder>
-   <zorder>lineEdit_2</zorder>
-   <zorder>line_2</zorder>
-   <zorder>comboColor</zorder>
-   <zorder>doubleSpinBox</zorder>
-   <zorder>lineEditHeader</zorder>
    <zorder></zorder>
-   <zorder>label_5</zorder>
-   <zorder>label_6</zorder>
-   <zorder>lineEditPIctureLabel</zorder>
    <zorder>line_3</zorder>
-   <zorder>horizontalSpacer</zorder>
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
