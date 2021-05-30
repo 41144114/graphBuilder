@@ -8,7 +8,7 @@
 #include <QClipboard>
 #include <QDebug>
 
-#include "dftcounter.h"
+#include "dftmanager.h"
 
 GraphView::GraphView(QWidget *parent) :
     QMainWindow(parent),
@@ -242,7 +242,7 @@ void GraphView::setupGlobalMenu()
 {
     _pGlobalMenu = new QMenu(this);
     _pShowFourier = new QAction("Преобразование Фурье", this);
-    connect(_pShowFourier,    &QAction::triggered,        this, &GraphView::onShowFourier);
+    connect(_pShowFourier,    &QAction::triggered,        this, &GraphView::onCountFourier);
     _pGlobalMenu->addAction(_pShowFourier);
 }
 
@@ -251,28 +251,30 @@ void GraphView::onShowGlobalMenu(QPoint point)
     _pGlobalMenu->popup(this->mapToGlobal(point));
 }
 
-void GraphView::onShowFourier()
+void GraphView::onShowFourier(QVector<double>* xValues, QVector<double>* yValues)
 {
     GraphView* fourierGraph = new GraphView();
-    QVector<double>* dftX = new QVector<double>;
-    QVector<double>* dftY = new QVector<double>;
-    DFTCounter counter;
-    QThread* thread = new QThread;
-    counter.moveToThread(thread);
-    thread->start(QThread::HighPriority);
 
-    int nThreads = QThread::idealThreadCount() - 1;
-    QDateTime startTime = QDateTime::currentDateTime();
-    qDebug() << ":berfasfdasdf" << QDateTime::currentDateTime().toString("hh::mm::ss::zz");
+    _fourierMngrThread->terminate();
+    delete  _fourierMngrThread;
+    delete _dftManager;
 
-    QVector<QVector<double>> allResults;
-    allResults.resize(nThreads);
-
-    counter.getDFT(_dataX, _dataY, dftX, dftY);
-    thread->terminate();
-    delete thread;
-    qDebug()<< "sdfasdfl"<< QDateTime::currentDateTime().toString("hh::mm::ss::zz");
-    qDebug() << startTime.msecsTo(QDateTime::currentDateTime());
-    fourierGraph->buildGraph(dftX, dftY, QString(), QString(), 0, 0, 1.5,QString(),QString());
+    qDebug() << _startTime.msecsTo(QDateTime::currentDateTime());
+    fourierGraph->buildGraph(xValues, yValues, QString(), QString(), 0, 0, 1.5,QString(),QString());
 }
+
+void GraphView::onCountFourier()
+{
+    _fourierMngrThread = new QThread();
+    _dftManager = new DftManager();
+
+    _dftManager->moveToThread(_fourierMngrThread);
+    _fourierMngrThread->start(QThread::NormalPriority);
+    connect(_dftManager, &DftManager::finished, this, &GraphView::onShowFourier);
+    connect(this, &GraphView::startFourierCount, _dftManager, &DftManager::onStart);
+    emit startFourierCount(_dataX, _dataY);
+    _startTime = QDateTime::currentDateTime();
+    qDebug() << "start" << _startTime;
+}
+
 //=====================================================================================================================

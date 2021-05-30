@@ -18,14 +18,16 @@ SOURCES += main.cpp\
     qcustomplot.cpp \
     graphview.cpp \
     palettemngr.cpp \
-    dftcounter.cpp
+    dftcounter.cpp \
+    dftmanager.cpp
 
 HEADERS  += mainwindow.h \
     aboutprogramwindow.h \
     qcustomplot.h \
     graphview.h \
     palettemngr.h \
-    dftcounter.h
+    dftcounter.h \
+    dftmanager.h
 
 FORMS    += mainwindow.ui \
     aboutprogramwindow.ui \

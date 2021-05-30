@@ -5,8 +5,10 @@
 #include <QVector>
 #include <QCloseEvent>
 #include <QAction>
+#include <QDateTime>
 
 class QCustomPlot;
+class DftManager;
 
 namespace Ui {
 class GraphView;
@@ -25,6 +27,7 @@ public:
 
 signals:
     void closed();
+    void startFourierCount(QVector<double> *xValues, QVector<double> *yValues);
 
 protected:
     void closeEvent(QCloseEvent *event);
@@ -33,7 +36,8 @@ private slots:
     void mousePress(QMouseEvent* event);
     void mouseRelease(QMouseEvent* event);
     void onShowGlobalMenu(QPoint point);
-    void onShowFourier();
+    void onShowFourier(QVector<double> *xValues, QVector<double> *yValues);
+    void onCountFourier();
 
 
 private:
@@ -53,6 +57,11 @@ private:
     bool _isEnableContest;
     QVector<double>* _dataX;
     QVector<double>* _dataY;
+
+    QDateTime _startTime;
+
+    QThread* _fourierMngrThread;
+    DftManager* _dftManager;
 
     void doScreen();
     void setDefaultSize();
