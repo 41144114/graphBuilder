@@ -16,6 +16,7 @@
 		<file>solid.png</file>
 		<file>dash.png</file>
 		<file>dashDot.png</file>
+		<file>logo.png</file>
 		
     </qresource>
 </RCC>

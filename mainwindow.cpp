@@ -21,6 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle("Построитель графиков");
     _pFile = new QFile();
     connect(&_graphView, &GraphView::closed, this, &MainWindow::onGraphViewClosed);
+    _graphView.setEnabledContext(true);
     _pPaletteMngr = new PaletteMngr(palette());
 
 

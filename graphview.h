@@ -17,10 +17,11 @@ class GraphView : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit GraphView(QWidget *parent = 0);
+    explicit GraphView(QWidget *parent = nullptr);
     ~GraphView();
     void buildGraph(QVector<double> *dataX, QVector<double> *dataY, QString xName, QString yName, int color, int type, double width, QString header, QString pictureLabel);
     void addGraph(QVector<double> *dataX, QVector<double> *dataY, int color, int type, double width);
+    void setEnabledContext(bool isEnabled);
 
 signals:
     void closed();
@@ -47,7 +48,11 @@ private:
     double _curMinY;
     int _curGraphIndex;
     QPoint _startPoint;
-    bool isActualZoom;
+    bool _isActualZoom;
+    bool _isNotZoomedState;
+    bool _isEnableContest;
+    QVector<double>* _dataX;
+    QVector<double>* _dataY;
 
     void doScreen();
     void setDefaultSize();

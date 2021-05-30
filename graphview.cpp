@@ -8,6 +8,8 @@
 #include <QClipboard>
 #include <QDebug>
 
+#include "dftcounter.h"
+
 GraphView::GraphView(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::GraphView)
@@ -34,11 +36,17 @@ GraphView::GraphView(QWidget *parent) :
 
     connect(_pPlot, &QCustomPlot::mousePress, this, &GraphView::mousePress);
     connect(_pPlot, &QCustomPlot::mouseRelease, this, &GraphView::mouseRelease);
+    _isEnableContest = false;
 }
 
 GraphView::~GraphView()
 {
     delete ui;
+}
+
+void GraphView::setEnabledContext(bool isEnabled)
+{
+    _isEnableContest = isEnabled;
 }
 
 void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QString xName, QString yName,
@@ -76,6 +84,8 @@ void GraphView::addGraph(QVector<double> *dataX, QVector<double> *dataY, int col
     _pPlot->addGraph(_pPlot->xAxis, _pPlot->yAxis);
     QPen pen = setupPen(width, type, color);
 
+    _dataX = dataX;
+    _dataY = dataY;
 
     _pPlot->graph(_curGraphIndex)->setPen(pen);
     _pPlot->graph(_curGraphIndex)->setData(*dataX, *dataY);
@@ -150,6 +160,7 @@ void GraphView::resize(QVector<double> *dataX, QVector<double> *dataY)
 
     _pPlot->yAxis->setRange(_curMaxY, _curMinY);
     _pPlot->xAxis->setRange(_curMaxX, _curMinX);
+    _isNotZoomedState = true;
 }
 
 void GraphView::doScreen()
@@ -163,6 +174,7 @@ void GraphView::setDefaultSize()
     _pPlot->yAxis->setRange(_curMaxY, _curMinY);
     _pPlot->xAxis->setRange(_curMaxX, _curMinX);
     _pPlot->replot();
+    _isNotZoomedState = true;
 }
 
 //============ Resize =================================================================================================
@@ -179,6 +191,7 @@ void GraphView::resizeByPoints(QPoint start, QPoint finish)
     _pPlot->yAxis->setRange(_pPlot->yAxis->pixelToCoord(start.y()),_pPlot->yAxis->pixelToCoord(finish.y()));
     _pPlot->xAxis->setRange(_pPlot->xAxis->pixelToCoord(start.x()),_pPlot->xAxis->pixelToCoord(finish.x()));
     _pPlot->replot();
+    _isNotZoomedState = false;
 }
 
 void GraphView::mousePress(QMouseEvent* event)
@@ -186,19 +199,24 @@ void GraphView::mousePress(QMouseEvent* event)
     if(event->button() == Qt::LeftButton)
     {
         _startPoint = event->pos();
-        isActualZoom = true;
+        _isActualZoom = true;
     }
     else
-        isActualZoom = false;
+        _isActualZoom = false;
 
 
     if(event->button() == Qt::RightButton)
-        setDefaultSize();
+    {
+        if(_isNotZoomedState && _isEnableContest)
+            onShowGlobalMenu(event->pos());
+        else
+            setDefaultSize();
+    }
 }
 
 void GraphView::mouseRelease(QMouseEvent* event)
 {
-    if(event->button() == Qt::LeftButton && isActualZoom)
+    if(event->button() == Qt::LeftButton && _isActualZoom)
     {
         QPoint endPoint = event->pos();
         if(checkNeedToResize(_startPoint, endPoint))
@@ -222,13 +240,10 @@ void GraphView::closeEvent(QCloseEvent *event)
 //=========== Context menu ============================================================================================
 void GraphView::setupGlobalMenu()
 {
-    connect(this, &GraphView::customContextMenuRequested,       this, &GraphView::onShowGlobalMenu);
-
     _pGlobalMenu = new QMenu(this);
     _pShowFourier = new QAction("Преобразование Фурье", this);
     connect(_pShowFourier,    &QAction::triggered,        this, &GraphView::onShowFourier);
     _pGlobalMenu->addAction(_pShowFourier);
-
 }
 
 void GraphView::onShowGlobalMenu(QPoint point)
@@ -238,6 +253,26 @@ void GraphView::onShowGlobalMenu(QPoint point)
 
 void GraphView::onShowFourier()
 {
+    GraphView* fourierGraph = new GraphView();
+    QVector<double>* dftX = new QVector<double>;
+    QVector<double>* dftY = new QVector<double>;
+    DFTCounter counter;
+    QThread* thread = new QThread;
+    counter.moveToThread(thread);
+    thread->start(QThread::HighPriority);
 
+    int nThreads = QThread::idealThreadCount() - 1;
+    QDateTime startTime = QDateTime::currentDateTime();
+    qDebug() << ":berfasfdasdf" << QDateTime::currentDateTime().toString("hh::mm::ss::zz");
+
+    QVector<QVector<double>> allResults;
+    allResults.resize(nThreads);
+
+    counter.getDFT(_dataX, _dataY, dftX, dftY);
+    thread->terminate();
+    delete thread;
+    qDebug()<< "sdfasdfl"<< QDateTime::currentDateTime().toString("hh::mm::ss::zz");
+    qDebug() << startTime.msecsTo(QDateTime::currentDateTime());
+    fourierGraph->buildGraph(dftX, dftY, QString(), QString(), 0, 0, 1.5,QString(),QString());
 }
 //=====================================================================================================================
