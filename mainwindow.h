@@ -1,17 +1,18 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QFile>
-#include <QVector>
-#include <QDropEvent>
-#include <QDragEnterEvent>
 #include "graphview.h"
+#include <QDragEnterEvent>
+#include <QDropEvent>
+#include <QFile>
+#include <QMainWindow>
+#include <QVector>
 
 class AboutProgramWindow;
 class PaletteMngr;
 
-namespace Ui {
+namespace Ui
+{
 class MainWindow;
 }
 
@@ -20,7 +21,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
 private slots:
@@ -36,10 +37,10 @@ private slots:
 
 protected:
     void dropEvent(QDropEvent* event);
-    void dragEnterEvent(QDragEnterEvent *e);
+    void dragEnterEvent(QDragEnterEvent* e);
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
     AboutProgramWindow* _pAboutProgram;
     PaletteMngr* _pPaletteMngr;
     QFile* _pFile;
@@ -53,7 +54,6 @@ private:
     bool _isDarkTheme;
 
     GraphView _graphView;
-
 
     void readFile(QString fName);
     void clearData();

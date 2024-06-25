@@ -16,8 +16,8 @@ PaletteMngr::PaletteMngr(QPalette defaultPalette)
     _pTrueDarkGray->setBlue(30);
     _pTrueDarkGray->setGreen(30);
 
-    _pLinkButtonColor->setRed(37);   //Я не знаю почему, но там выставляется именно такой цвет.
-    _pLinkButtonColor->setBlue(37);  //Идея в том, чтобы скрыть кнопку в которой ссылка
+    _pLinkButtonColor->setRed(37); //Я не знаю почему, но там выставляется именно такой цвет.
+    _pLinkButtonColor->setBlue(37); //Идея в том, чтобы скрыть кнопку в которой ссылка
     _pLinkButtonColor->setGreen(37);
 
     _pDarkPalette->setColor(QPalette::Window, Qt::black);
@@ -42,16 +42,13 @@ PaletteMngr::PaletteMngr(QPalette defaultPalette)
     _pDarkPalette->setColor(QPalette::Disabled, QPalette::HighlightedText, Qt::black);
     _pDarkPalette->setColor(QPalette::Inactive, QPalette::HighlightedText, Qt::black);
 
-
     _pDarkPalette->setColor(QPalette::Disabled, QPalette::Base, Qt::darkGray);
     _pDarkPalette->setColor(QPalette::Active, QPalette::Base, *_pTrueDarkGray);
     _pDarkPalette->setColor(QPalette::Inactive, QPalette::Base, Qt::gray);
 
-    _pDarkPalette->setColor(QPalette::Disabled,  QPalette::Button, Qt::darkGray);
-    _pDarkPalette->setColor(QPalette::Active,    QPalette::Button, *_pTrueDarkGray);
-    _pDarkPalette->setColor(QPalette::Inactive,  QPalette::Button, Qt::gray);
-
-
+    _pDarkPalette->setColor(QPalette::Disabled, QPalette::Button, Qt::darkGray);
+    _pDarkPalette->setColor(QPalette::Active, QPalette::Button, *_pTrueDarkGray);
+    _pDarkPalette->setColor(QPalette::Inactive, QPalette::Button, Qt::gray);
 
     *_pDarkNaviWidgetPalette = *_pDarkPalette;
     _pDarkNaviWidgetPalette->setColor(QPalette::Active, QPalette::Text, Qt::black);
@@ -65,38 +62,21 @@ PaletteMngr::PaletteMngr(QPalette defaultPalette)
     _pDarkConsolePalette->setColor(QPalette::Text, Qt::white);
 }
 
-QPalette PaletteMngr::getDark()
-{
-    return *_pDarkPalette;
-}
+QPalette PaletteMngr::getDark() { return *_pDarkPalette; }
 
-QPalette PaletteMngr::getDefault()
-{
-    return *_pDefaultPalette;
-}
+QPalette PaletteMngr::getDefault() { return *_pDefaultPalette; }
 
-QPalette PaletteMngr::getConsoleDark()
-{
-    return *_pDarkConsolePalette;
-}
+QPalette PaletteMngr::getConsoleDark() { return *_pDarkConsolePalette; }
 
-QPalette PaletteMngr::getConsoleDefault()
-{
-    return *_pDefaultConsolePalette;
-}
+QPalette PaletteMngr::getConsoleDefault() { return *_pDefaultConsolePalette; }
 
-QPalette PaletteMngr::getNaviWidgetDark()
-{
-    return *_pDarkNaviWidgetPalette;
-}
+QPalette PaletteMngr::getNaviWidgetDark() { return *_pDarkNaviWidgetPalette; }
 
 QString PaletteMngr::getDarkLinkStyleSheet()
 {
-    return QString("QToolButton {color: yellow;background: %1;} QToolButton:hover{ background: %1; border : 0px} QToolButton:window{ background: lightGray;}")
-            .arg(_pLinkButtonColor->name(QColor::HexRgb));
+    return QString("QToolButton {color: yellow;background: %1;} QToolButton:hover{ background: %1; border : 0px} "
+                   "QToolButton:window{ background: lightGray;}")
+        .arg(_pLinkButtonColor->name(QColor::HexRgb));
 }
 
-QString PaletteMngr::getDefaultLinkStyleSheet()
-{
-    return "color: blue";
-}
+QString PaletteMngr::getDefaultLinkStyleSheet() { return "color: blue"; }

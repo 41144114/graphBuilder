@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class AboutProgramWindow;
 }
 
@@ -12,11 +13,11 @@ class AboutProgramWindow : public QWidget
     Q_OBJECT
 
 public:
-    explicit AboutProgramWindow(QWidget *parent = nullptr);
+    explicit AboutProgramWindow(QWidget* parent = nullptr);
     ~AboutProgramWindow();
 
 private:
-    Ui::AboutProgramWindow *ui;
+    Ui::AboutProgramWindow* ui;
 };
 
 #endif // ABOUTPROGRAMWINDOW_H

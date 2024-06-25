@@ -8,7 +8,7 @@ class DftManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit DftManager(QObject *parent = 0);
+    explicit DftManager(QObject* parent = 0);
     ~DftManager();
 
 signals:

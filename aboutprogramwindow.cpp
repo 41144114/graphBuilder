@@ -1,9 +1,7 @@
 #include "aboutprogramwindow.h"
 #include "ui_aboutprogramwindow.h"
 
-AboutProgramWindow::AboutProgramWindow(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::AboutProgramWindow)
+AboutProgramWindow::AboutProgramWindow(QWidget* parent) : QWidget(parent), ui(new Ui::AboutProgramWindow)
 {
     ui->setupUi(this);
     ui->labelDescription->setText("Строит графики по рядам данных из текста.\r\n"
@@ -15,7 +13,4 @@ AboutProgramWindow::AboutProgramWindow(QWidget *parent) :
                                   "А ещё она бесплатная)");
 }
 
-AboutProgramWindow::~AboutProgramWindow()
-{
-    delete ui;
-}
+AboutProgramWindow::~AboutProgramWindow() { delete ui; }

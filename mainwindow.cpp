@@ -1,21 +1,19 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QFileDialog>
-#include <QMimeData>
-#include <QDebug>
-#include <QSettings>
+#include "aboutprogramwindow.h"
 #include "palettemngr.h"
+#include <QDebug>
+#include <QFileDialog>
 #include <QMenu>
 #include <QMessageBox>
-#include "aboutprogramwindow.h"
+#include <QMimeData>
+#include <QSettings>
 
 const QString kPathKey = "lastFilePath";
 const QString kThemeKey = "isDarkTheme";
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     setWindowTitle("Построитель графиков");
@@ -23,7 +21,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&_graphView, &GraphView::closed, this, &MainWindow::onGraphViewClosed);
     _graphView.setEnabledContext(true);
     _pPaletteMngr = new PaletteMngr(palette());
-
 
     ui->pushButton_2->setEnabled(false);
     setupGlobalMenu();
@@ -38,22 +35,18 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-
-
-
 //============ Window slots ===================================
 void MainWindow::on_pushButton_clicked()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     QString dir;
-    if(settings.contains(kPathKey))
+    if (settings.contains(kPathKey))
         dir = settings.value(kPathKey).toString();
     else
         dir = "/";
 
     QString fName = QFileDialog::getOpenFileName(this, "Выбор файла с данными", dir);
-    if(fName.isEmpty())
+    if (fName.isEmpty())
         return;
 
     QFileInfo info(fName);
@@ -65,20 +58,20 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    if(ui->lineEdit->text().isEmpty())
-        return ;
-    if(ui->comboBox->count() == 0)
+    if (ui->lineEdit->text().isEmpty())
         return;
-    if(ui->comboBox_2->count() == 0)
+    if (ui->comboBox->count() == 0)
+        return;
+    if (ui->comboBox_2->count() == 0)
         return;
 
-    if(ui->pushButton_2->text() == "Построить график")
+    if (ui->pushButton_2->text() == "Построить график")
     {
         crutchWithHead();
         _graphView.buildGraph(&_dataList[ui->comboBox->currentIndex()], &_dataList[ui->comboBox_2->currentIndex() + 1],
-                ui->lineEdit_2->text(), ui->lineEdit_3->text(),
-                ui->comboColor->currentIndex(), ui->comboLineType->currentIndex(), ui->doubleSpinBox->value(),
-                ui->lineEditHeader->text(), ui->lineEditPIctureLabel->text());
+                              ui->lineEdit_2->text(), ui->lineEdit_3->text(), ui->comboColor->currentIndex(),
+                              ui->comboLineType->currentIndex(), ui->doubleSpinBox->value(), ui->lineEditHeader->text(),
+                              ui->lineEditPIctureLabel->text());
         ui->pushButton_2->setText("Добавить график");
         ui->comboBox->setEnabled(false);
     }
@@ -86,13 +79,14 @@ void MainWindow::on_pushButton_2_clicked()
     {
         crutchWithHead();
         _graphView.addGraph(&_dataList[ui->comboBox->currentIndex()], &_dataList[ui->comboBox_2->currentIndex() + 1],
-                 ui->comboColor->currentIndex(), ui->comboLineType->currentIndex(), ui->doubleSpinBox->value());
+                            ui->comboColor->currentIndex(), ui->comboLineType->currentIndex(),
+                            ui->doubleSpinBox->value());
     }
 }
 
 void MainWindow::on_checkBox_clicked()
 {
-    if(_head.isEmpty() == false)
+    if (_head.isEmpty() == false)
         setComboBoxContent();
 }
 
@@ -110,19 +104,20 @@ void MainWindow::onGraphViewClosed()
 void MainWindow::setComboBoxContent()
 {
     QStringList head = _head.split(";");
-    if(head.last().isEmpty())   head.takeLast();
+    if (head.last().isEmpty())
+        head.takeLast();
 
     ui->comboBox->clear();
     ui->comboBox_2->clear();
     ui->comboBox->addItem("Задать автоматически");
-    if(ui->checkBox->isChecked())
+    if (ui->checkBox->isChecked())
     {
         ui->comboBox->addItems(head);
         ui->comboBox_2->addItems(head);
     }
     else
     {
-        for(int i = 1; i <= head.count(); ++i)
+        for (int i = 1; i <= head.count(); ++i)
         {
             ui->comboBox->addItem("Столбец №" + QString::number(i));
             ui->comboBox_2->addItem("Столбец №" + QString::number(i));
@@ -132,20 +127,19 @@ void MainWindow::setComboBoxContent()
 
 void MainWindow::crutchWithHead()
 {
-    if(ui->checkBox->isChecked() && _isHeadAdded)
+    if (ui->checkBox->isChecked() && _isHeadAdded)
     {
-        for(int i = 1; i < _dataList.count(); ++i)
-            _dataList[i].takeFirst();
+        for (int i = 1; i < _dataList.count(); ++i) _dataList[i].takeFirst();
         _dataList[0].takeLast();
         _isHeadAdded = false;
     }
-    else if(ui->checkBox->isChecked() == false && _isHeadAdded == false)
+    else if (ui->checkBox->isChecked() == false && _isHeadAdded == false)
     {
 
         QStringList temp = _head.split(";");
         QString num;
 
-        for(int i = 1; i < _dataList.count(); ++i)
+        for (int i = 1; i < _dataList.count(); ++i)
         {
             num = temp.at(i - 1);
             _dataList[i].prepend(num.toDouble());
@@ -173,7 +167,7 @@ void MainWindow::readFile(QString fName)
     int nCols = ui->comboBox_2->count();
     _dataList.resize(nCols + 1);
 
-    while(_pFile->atEnd() == false)
+    while (_pFile->atEnd() == false)
     {
         counterVector.append(i);
         ++i;
@@ -181,8 +175,7 @@ void MainWindow::readFile(QString fName)
         temp = _pFile->readLine();
         temp = temp.simplified();
         splitLine = temp.split(';');
-        for(int j = 1; j <= splitLine.count() && j <= nCols; ++j)
-            _dataList[j].append(splitLine.at(j-1).toDouble());
+        for (int j = 1; j <= splitLine.count() && j <= nCols; ++j) _dataList[j].append(splitLine.at(j - 1).toDouble());
     }
     _dataList[0].append(counterVector);
     _pFile->close();
@@ -191,8 +184,7 @@ void MainWindow::readFile(QString fName)
 
 void MainWindow::clearData()
 {
-    for(int i = 0; i < _dataList.count(); ++i)
-        _dataList[i].clear();
+    for (int i = 0; i < _dataList.count(); ++i) _dataList[i].clear();
 }
 //==============================================================
 //=
@@ -200,17 +192,17 @@ void MainWindow::clearData()
 //=
 //=
 //==================== Events ===================================================================
-void MainWindow::dropEvent(QDropEvent *event)
+void MainWindow::dropEvent(QDropEvent* event)
 {
-   const QMimeData* data = event->mimeData();
-   if(data->hasUrls())
-   {
+    const QMimeData* data = event->mimeData();
+    if (data->hasUrls())
+    {
         readFile(data->urls().at(0).toLocalFile());
         ui->lineEdit->setText(data->urls().at(0).toLocalFile());
-   }
+    }
 }
 
-void MainWindow::dragEnterEvent(QDragEnterEvent *e)
+void MainWindow::dragEnterEvent(QDragEnterEvent* e)
 {
     if (e->mimeData()->hasUrls())
         e->acceptProposedAction();
@@ -223,33 +215,29 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *e)
 //================ Context menu =======================================================================================
 void MainWindow::setupGlobalMenu()
 {
-    connect(this, &MainWindow::customContextMenuRequested,       this, &MainWindow::onShowGlobalMenu);
+    connect(this, &MainWindow::customContextMenuRequested, this, &MainWindow::onShowGlobalMenu);
 
     _pGlobalMenu = new QMenu(this);
     _pAboutQtAction = new QAction("О Qt", this);
     _pAboutProgrammAction = new QAction("О программе", this);
-    _pThemeAction  = new QAction("Тёмная тема", this);
+    _pThemeAction = new QAction("Тёмная тема", this);
 
     _pThemeAction->setCheckable(true);
     _pThemeAction->setChecked(false);
-    connect(_pAboutQtAction,    &QAction::triggered,        this, &MainWindow::onAboutQt);
-    connect(_pAboutProgrammAction,       &QAction::triggered,        this, &MainWindow::onAboutProgram);
-    connect(_pThemeAction,     &QAction::triggered,        this, &MainWindow::onTheme);
-
+    connect(_pAboutQtAction, &QAction::triggered, this, &MainWindow::onAboutQt);
+    connect(_pAboutProgrammAction, &QAction::triggered, this, &MainWindow::onAboutProgram);
+    connect(_pThemeAction, &QAction::triggered, this, &MainWindow::onTheme);
 
     _pGlobalMenu->addAction(_pThemeAction);
     _pGlobalMenu->addAction(_pAboutProgrammAction);
     _pGlobalMenu->addAction(_pAboutQtAction);
 }
 
-void MainWindow::onShowGlobalMenu(QPoint point)
-{
-    _pGlobalMenu->popup(this->mapToGlobal(point));
-}
+void MainWindow::onShowGlobalMenu(QPoint point) { _pGlobalMenu->popup(this->mapToGlobal(point)); }
 
 void MainWindow::onTheme()
 {
-    if(_isDarkTheme)
+    if (_isDarkTheme)
     {
         _isDarkTheme = false;
         setPalette(_pPaletteMngr->getDefault());
@@ -261,25 +249,18 @@ void MainWindow::onTheme()
     }
 }
 
-void MainWindow::onAboutQt()
-{
-    QMessageBox::aboutQt(this, "О Qt");
-}
+void MainWindow::onAboutQt() { QMessageBox::aboutQt(this, "О Qt"); }
 
-void MainWindow::onAboutProgram()
-{
-    _pAboutProgram->show();
-}
-
+void MainWindow::onAboutProgram() { _pAboutProgram->show(); }
 
 //========================= Registry ==================================================================================
 void MainWindow::loadSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
-    if(settings.contains(kThemeKey))
+    if (settings.contains(kThemeKey))
     {
         bool isDark = settings.value(kThemeKey).toBool();
-        if(isDark)
+        if (isDark)
         {
             _isDarkTheme = false;
             onTheme();

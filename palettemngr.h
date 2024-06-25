@@ -9,7 +9,6 @@ class QColor;
  * Сюда просто вынесен весь функционал по заполнению палитр и некоторых styleSheets
  */
 
-
 class PaletteMngr
 {
 public:

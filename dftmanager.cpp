@@ -1,10 +1,10 @@
 #include "dftmanager.h"
-#include <QVector>
-#include <QThread>
-#include <QDebug>
 #include "dftcounter.h"
+#include <QDebug>
+#include <QThread>
+#include <QVector>
 
-DftManager::DftManager(QObject *parent) : QObject(parent)
+DftManager::DftManager(QObject* parent) : QObject(parent)
 {
     _xResult = new QVector<double>;
     _yResult = new QVector<double>;
@@ -14,7 +14,7 @@ DftManager::DftManager(QObject *parent) : QObject(parent)
 
 DftManager::~DftManager()
 {
-    while(_threads->count() > 0)
+    while (_threads->count() > 0)
     {
         QThread* temp = _threads->takeLast();
         temp->terminate();
@@ -36,14 +36,14 @@ void DftManager::onStart(QVector<double>* xPoints, QVector<double>* yPoints)
 
     int nValues = xPoints->count() / _nThreads;
     int startIndex = 0;
-    int finishIndex = xPoints->count()-1;
+    int finishIndex = xPoints->count() - 1;
 
-    for(int i = 0; i < _nThreads; ++i)
+    for (int i = 0; i < _nThreads; ++i)
     {
         startIndex = i * nValues;
         finishIndex = startIndex + nValues - 1;
-        if(i == _nThreads - 1)
-            finishIndex = xPoints->count()-1;
+        if (i == _nThreads - 1)
+            finishIndex = xPoints->count() - 1;
 
         thread = new QThread();
         counter = new DFTCounter();
@@ -63,6 +63,6 @@ void DftManager::onStart(QVector<double>* xPoints, QVector<double>* yPoints)
 void DftManager::onStageFinished()
 {
     _nReadyThreads++;
-    if(_nReadyThreads == _nThreads)
+    if (_nReadyThreads == _nThreads)
         emit finished(_xResult, _yResult);
 }

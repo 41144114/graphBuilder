@@ -2,17 +2,15 @@
 #include "ui_graphview.h"
 
 #include "qcustomplot.h"
-#include <QPen>
-#include <QColor>
-#include <QPixmap>
 #include <QClipboard>
+#include <QColor>
 #include <QDebug>
+#include <QPen>
+#include <QPixmap>
 
 #include "dftmanager.h"
 
-GraphView::GraphView(QWidget *parent) :
-    QMainWindow(parent),
-    ui(new Ui::GraphView)
+GraphView::GraphView(QWidget* parent) : QMainWindow(parent), ui(new Ui::GraphView)
 {
     ui->setupUi(this);
     setWindowTitle("Окно графиков");
@@ -39,25 +37,19 @@ GraphView::GraphView(QWidget *parent) :
     _isEnableContest = false;
 }
 
-GraphView::~GraphView()
-{
-    delete ui;
-}
+GraphView::~GraphView() { delete ui; }
 
-void GraphView::setEnabledContext(bool isEnabled)
-{
-    _isEnableContest = isEnabled;
-}
+void GraphView::setEnabledContext(bool isEnabled) { _isEnableContest = isEnabled; }
 
-void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QString xName, QString yName,
-                           int color, int type, double width, QString header, QString pictureLabel)
+void GraphView::buildGraph(QVector<double>* dataX, QVector<double>* dataY, QString xName, QString yName, int color,
+                           int type, double width, QString header, QString pictureLabel)
 {
     _curGraphIndex = 0;
     _pPlot->clearGraphs();
 
     addGraph(dataX, dataY, color, type, width);
 
-    if(header.isEmpty())
+    if (header.isEmpty())
         ui->label->setVisible(false);
     else
     {
@@ -65,7 +57,7 @@ void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QStri
         ui->label->setVisible(true);
     }
 
-    if(pictureLabel.isEmpty())
+    if (pictureLabel.isEmpty())
         ui->label_2->setVisible(false);
     else
     {
@@ -79,7 +71,7 @@ void GraphView::buildGraph(QVector<double> *dataX, QVector<double> *dataY, QStri
     show();
 }
 
-void GraphView::addGraph(QVector<double> *dataX, QVector<double> *dataY, int color, int type, double width)
+void GraphView::addGraph(QVector<double>* dataX, QVector<double>* dataY, int color, int type, double width)
 {
     _pPlot->addGraph(_pPlot->xAxis, _pPlot->yAxis);
     QPen pen = setupPen(width, type, color);
@@ -100,35 +92,67 @@ QPen GraphView::setupPen(double width, int type, int color)
 {
     QPen pen;
     pen.setWidthF(width);
-    switch(color)
+    switch (color)
     {
-        case 0: pen.setColor(Qt::black);        break;
-        case 1: pen.setColor(Qt::darkGray);     break;
-        case 2: pen.setColor(Qt::gray);         break;
-        case 3: pen.setColor(Qt::lightGray);    break;
-        case 4: pen.setColor(Qt::blue);         break;
-        case 5: pen.setColor(Qt::darkCyan);     break;
-        case 6: pen.setColor(Qt::cyan);         break;
-        case 7: pen.setColor(Qt::yellow);       break;
-        case 8: pen.setColor(Qt::darkYellow);   break;
-        case 9: pen.setColor(Qt::red);          break;
-        case 10: pen.setColor(Qt::magenta);     break;
-        case 11: pen.setColor(Qt::green);       break;
+        case 0:
+            pen.setColor(Qt::black);
+            break;
+        case 1:
+            pen.setColor(Qt::darkGray);
+            break;
+        case 2:
+            pen.setColor(Qt::gray);
+            break;
+        case 3:
+            pen.setColor(Qt::lightGray);
+            break;
+        case 4:
+            pen.setColor(Qt::blue);
+            break;
+        case 5:
+            pen.setColor(Qt::darkCyan);
+            break;
+        case 6:
+            pen.setColor(Qt::cyan);
+            break;
+        case 7:
+            pen.setColor(Qt::yellow);
+            break;
+        case 8:
+            pen.setColor(Qt::darkYellow);
+            break;
+        case 9:
+            pen.setColor(Qt::red);
+            break;
+        case 10:
+            pen.setColor(Qt::magenta);
+            break;
+        case 11:
+            pen.setColor(Qt::green);
+            break;
     }
 
-    switch(type)
+    switch (type)
     {
-        case 0: pen.setStyle(Qt::SolidLine); break;
-        case 1: pen.setStyle(Qt::DashLine); break;
-        case 2: pen.setStyle(Qt::DashDotLine); break;
-        default: pen.setStyle(Qt::SolidLine); break;
+        case 0:
+            pen.setStyle(Qt::SolidLine);
+            break;
+        case 1:
+            pen.setStyle(Qt::DashLine);
+            break;
+        case 2:
+            pen.setStyle(Qt::DashDotLine);
+            break;
+        default:
+            pen.setStyle(Qt::SolidLine);
+            break;
     }
     return pen;
 }
 
-void GraphView::resize(QVector<double> *dataX, QVector<double> *dataY)
+void GraphView::resize(QVector<double>* dataX, QVector<double>* dataY)
 {
-    if(_curGraphIndex == 0)
+    if (_curGraphIndex == 0)
     {
         _curMaxY = dataY->at(0);
         _curMinY = dataY->at(0);
@@ -141,21 +165,25 @@ void GraphView::resize(QVector<double> *dataX, QVector<double> *dataY)
     double minX = _curMinX;
     double maxX = _curMaxX;
 
-    for(int i = 0; i < dataY->count(); ++i)
+    for (int i = 0; i < dataY->count(); ++i)
     {
-        if(dataY->at(i) > maxY) maxY = dataY->at(i);
-        if(dataY->at(i) < minY) minY = dataY->at(i);
-        if(dataX->at(i) > maxX) maxX = dataX->at(i);
-        if(dataX->at(i) < minX) minX = dataX->at(i);
+        if (dataY->at(i) > maxY)
+            maxY = dataY->at(i);
+        if (dataY->at(i) < minY)
+            minY = dataY->at(i);
+        if (dataX->at(i) > maxX)
+            maxX = dataX->at(i);
+        if (dataX->at(i) < minX)
+            minX = dataX->at(i);
     }
 
-    if(maxY > _curMaxY)
+    if (maxY > _curMaxY)
         _curMaxY = maxY;
-    if(minY < _curMinY)
+    if (minY < _curMinY)
         _curMinY = minY;
-    if(maxX > _curMaxX)
+    if (maxX > _curMaxX)
         _curMaxX = maxX;
-    if(minX < _curMinX)
+    if (minX < _curMinX)
         _curMinX = minX;
 
     _pPlot->yAxis->setRange(_curMaxY, _curMinY);
@@ -180,23 +208,23 @@ void GraphView::setDefaultSize()
 //============ Resize =================================================================================================
 bool GraphView::checkNeedToResize(QPoint start, QPoint finish)
 {
-    if(abs(start.x() - finish.x()) > 15)
-        if(abs(start.y() - finish.y()) > 15)
+    if (abs(start.x() - finish.x()) > 15)
+        if (abs(start.y() - finish.y()) > 15)
             return true;
     return false;
 }
 
 void GraphView::resizeByPoints(QPoint start, QPoint finish)
 {
-    _pPlot->yAxis->setRange(_pPlot->yAxis->pixelToCoord(start.y()),_pPlot->yAxis->pixelToCoord(finish.y()));
-    _pPlot->xAxis->setRange(_pPlot->xAxis->pixelToCoord(start.x()),_pPlot->xAxis->pixelToCoord(finish.x()));
+    _pPlot->yAxis->setRange(_pPlot->yAxis->pixelToCoord(start.y()), _pPlot->yAxis->pixelToCoord(finish.y()));
+    _pPlot->xAxis->setRange(_pPlot->xAxis->pixelToCoord(start.x()), _pPlot->xAxis->pixelToCoord(finish.x()));
     _pPlot->replot();
     _isNotZoomedState = false;
 }
 
 void GraphView::mousePress(QMouseEvent* event)
 {
-    if(event->button() == Qt::LeftButton)
+    if (event->button() == Qt::LeftButton)
     {
         _startPoint = event->pos();
         _isActualZoom = true;
@@ -204,10 +232,9 @@ void GraphView::mousePress(QMouseEvent* event)
     else
         _isActualZoom = false;
 
-
-    if(event->button() == Qt::RightButton)
+    if (event->button() == Qt::RightButton)
     {
-        if(_isNotZoomedState && _isEnableContest)
+        if (_isNotZoomedState && _isEnableContest)
             onShowGlobalMenu(event->pos());
         else
             setDefaultSize();
@@ -216,10 +243,10 @@ void GraphView::mousePress(QMouseEvent* event)
 
 void GraphView::mouseRelease(QMouseEvent* event)
 {
-    if(event->button() == Qt::LeftButton && _isActualZoom)
+    if (event->button() == Qt::LeftButton && _isActualZoom)
     {
         QPoint endPoint = event->pos();
-        if(checkNeedToResize(_startPoint, endPoint))
+        if (checkNeedToResize(_startPoint, endPoint))
             resizeByPoints(_startPoint, endPoint);
     }
 }
@@ -229,38 +256,34 @@ void GraphView::mouseRelease(QMouseEvent* event)
 //=
 //=
 //================== Events ==========================================
-void GraphView::closeEvent(QCloseEvent *event)
+void GraphView::closeEvent(QCloseEvent* event)
 {
     _pPlot->clearGraphs();
     emit closed();
     event->accept();
 }
 
-
 //=========== Context menu ============================================================================================
 void GraphView::setupGlobalMenu()
 {
     _pGlobalMenu = new QMenu(this);
     _pShowFourier = new QAction("Преобразование Фурье", this);
-    connect(_pShowFourier,    &QAction::triggered,        this, &GraphView::onCountFourier);
+    connect(_pShowFourier, &QAction::triggered, this, &GraphView::onCountFourier);
     _pGlobalMenu->addAction(_pShowFourier);
 }
 
-void GraphView::onShowGlobalMenu(QPoint point)
-{
-    _pGlobalMenu->popup(this->mapToGlobal(point));
-}
+void GraphView::onShowGlobalMenu(QPoint point) { _pGlobalMenu->popup(this->mapToGlobal(point)); }
 
 void GraphView::onShowFourier(QVector<double>* xValues, QVector<double>* yValues)
 {
     GraphView* fourierGraph = new GraphView();
 
     _fourierMngrThread->terminate();
-    delete  _fourierMngrThread;
+    delete _fourierMngrThread;
     delete _dftManager;
 
     qDebug() << _startTime.msecsTo(QDateTime::currentDateTime());
-    fourierGraph->buildGraph(xValues, yValues, QString(), QString(), 0, 0, 1.5,QString(),QString());
+    fourierGraph->buildGraph(xValues, yValues, QString(), QString(), 0, 0, 1.5, QString(), QString());
 }
 
 void GraphView::onCountFourier()
