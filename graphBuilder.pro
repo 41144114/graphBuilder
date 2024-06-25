@@ -14,6 +14,7 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
     aboutprogramwindow.cpp \
+    bigvectorholder.cpp \
         mainwindow.cpp \
     qcustomplot.cpp \
     graphview.cpp \
@@ -23,6 +24,7 @@ SOURCES += main.cpp\
 
 HEADERS  += mainwindow.h \
     aboutprogramwindow.h \
+    bigvectorholder.h \
     qcustomplot.h \
     graphview.h \
     palettemngr.h \
