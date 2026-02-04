@@ -4,6 +4,9 @@
 *.lo
 *.o
 *.obj
+*.dll
+*.stash
+*moc_predefs*
 
 # Precompiled Headers
 *.gch
@@ -12,7 +15,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
+
 
 # Fortran module files
 *.mod
@@ -20,8 +23,7 @@
 # Compiled Static libraries
 *.lai
 *.la
-*.a
-*.lib
+
 
 # Executables
 *.exe
@@ -35,10 +37,8 @@
 *.lo
 *.o
 *.a
-*.la
 *.lai
 *.so
-*.dll
 *.dylib
 
 # Qt-es
@@ -56,6 +56,11 @@ ui_*.h
 Makefile*
 *-build-*
 *.qtc_clangd*
+*/Qt_*mingw*-Release*
+*/Qt_*mingw*-Debug*
+
+#PVS-Studio
+*PVS-Studio*
 
 # QtCreator
 
@@ -65,3 +70,26 @@ Makefile*
 *.qmlproject.user
 *.qmlproject.user.*
 
+# ---> Windows
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# Folder config file
+Desktop.ini
+
+# Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Windows shortcuts
+*.lnk
+
+**/_results
+*.Release
+*.Debug
